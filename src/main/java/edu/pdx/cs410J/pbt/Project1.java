@@ -8,6 +8,12 @@ import java.util.Date;
 
 /**
  * The main class for the CS410J appointment book Project
+ * Performs parsing and error checking of the user inputted command line
+ * options and arguments, upon successful parsing, it will create a
+ * new appointment book and enter the user's appointment into it. Will optionally
+ * print the appointment for the user if they use the -print command line
+ * option or display a read me to the user if they use the -README option.
+ *
  */
 public class Project1 {
 
@@ -19,11 +25,12 @@ public class Project1 {
       Appointment appointment = null;
       Date beginDate = null;
       Date endDate = null;
-
       int expectedArgs = 6;
       int firstAppointmentArg = 0;
       boolean printAppointment = false;
 
+      // Look through the command line arugments to see if
+      // -README or -print options were provided by the user.
       for(String arg : args) {
 
           if(arg.equals("-README")) {
@@ -54,12 +61,15 @@ public class Project1 {
           }
       }
 
+      // Check to make sure there aren't too few command
+      // line arguments.
       if(args.length < expectedArgs) {
 
           System.err.println("Missing command line arguments");
           System.exit(0);
       }
 
+      // Check to make sure there aren't too many command line arguments.
       if (args.length > expectedArgs) {
 
           System.err.println("Extraneous command line arguments");
@@ -71,40 +81,47 @@ public class Project1 {
       String stringBeginDate = args[firstAppointmentArg + 2] + " " + args[firstAppointmentArg + 3];
       String stringEndDate = args[firstAppointmentArg + 4] + " " + args[firstAppointmentArg + 5];
 
+      // Check to make sure the owner field is not blank.
       if(newOwner.length() == 0) {
           System.err.println("Owner cannot be blank.");
           System.exit(0);
       }
 
+      // Check to make sure the description field is not blank.
       if(newDescription.length() == 0) {
           System.err.println("Description cannot be blank.");
           System.exit(0);
       }
 
+      // Check to make sure the begin date format is correct.
       if(!args[firstAppointmentArg + 2].matches("\\d\\d?/\\d\\d?/\\d\\d\\d\\d")) {
           System.err.println("Begin date is incorrectly formatted!");
           System.exit(0);
       }
 
+      // Check to make sure the begin time format is correct.
       if(!args[firstAppointmentArg + 3].matches("\\d\\d?:\\d\\d")) {
           System.err.println("Begin time is incorrectly formatted!");
           System.exit(0);
       }
 
+      // Check to make sure the end date format is correct.
       if(!args[firstAppointmentArg + 4].matches("\\d\\d?/\\d\\d?/\\d\\d\\d\\d")) {
           System.err.println("End date is incorrectly formatted!");
           System.exit(0);
       }
 
+      // Check to make sure the end time format is correct.
       if(!args[firstAppointmentArg + 5].matches("\\d\\d?:\\d\\d")) {
           System.err.println("End time is incorrectly formatted!");
           System.exit(0);
       }
 
       SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
-
       dateFormat.setLenient(false);
 
+      // Attempt to parse the begin date and time to ensure that they
+      // are valid dates and times.
       try {
           beginDate = dateFormat.parse(stringBeginDate);
       }
@@ -113,6 +130,8 @@ public class Project1 {
           System.exit(0);
       }
 
+      // Attempt to parse the begin date and time to ensure that they
+      // are valid dates and times.
       try {
           endDate = dateFormat.parse(stringEndDate);
       }
@@ -121,6 +140,8 @@ public class Project1 {
           System.exit(0);
       }
 
+      // Create a new appointment book and appointment, and add
+      // that appointment to the appointment book.
       appointmentBook = new AppointmentBook(newOwner);
       appointment = new Appointment(newDescription, beginDate.toString(), endDate.toString());
       appointmentBook.addAppointment(appointment);
